@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Vuew</title>
+</head>
+<body>
+    <div id="my-app">
+        <h1>Hello, {{ text }}!</h1>
+        <div>
+            <a v-bind:href="link">UNIBO</a>
+        </div>
+        <div>
+            <button v-on:click="increment()">Increment</button>
+            <button v-on:click="decrement()">Decrement</button>
+            <p> {{ counter }} </p>
+            <p>Count is <span v-if="counter >= 0">positive</span><span v-else>negative</span></p>
+            <div>
+                <ul>
+                    <li v-for="name in names">{{ name }}</li>
+                </ul>
+            </div>
+            <div>
+                <form action="#" method="GET">
+                    <input v-model="new_text" type="text">
+                </form>
+                <p> {{ new_text }}</p>
+            </div>
+        </div>
+        <div>
+            <button v-on:click="getData()">Axios!</button>
+            <pre>{{ response }}</pre>
+        </div>
+    </div>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        Vue.createApp({
+            data() {
+                return {
+                    text: "Mario",
+                    link : "https://www.unibo.it",
+                    counter: 0,
+                    names: ["Luigi", "Luca", "Matteo"],
+                    new_text: "",
+                    response: {}
+                }
+            },
+            methods: {
+                increment() {
+                    this.counter++;
+                },
+                decrement() {
+                    this.counter--;
+                },
+                getData() {
+                    axios.get("http://api.coindesk.com/v1/bpi/currentprice.json").then(response => {
+                        this.response = response.data;
+                    }).catch(error => console.log(error))
+                }
+            },
+            mounted() {
+                this.getData();
+            }
+        }).mount("#my-app")
+    </script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>Hello World in Vue.js</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css" integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+<style>
+	table td img{ width: 100px;}
+</style>
+</head>
+
+<body>
+<div id="crud-movies-app" class="container-fluid">
+	<h1>CRUD Movies</h1>
+	<div class="row">
+		<div class="col">
+			<button type="button" class="btn btn-success"><i class="fas fa-plus"></i> Add Movie</button>
+		</div>
+	</div>
+	<div class="row" >
+		<div class="col">
+			<form>
+				<div class="form-group">
+					<label for="title">Title</label>
+					<input  type="text" class="form-control" id="title" placeholder="Enter title">
+				</div>
+				<div class="form-group">
+					<label for="plot">Plot</label>
+					<textarea class="form-control" id="plot">
+					</textarea>
+				</div>
+				<div class="form-group">
+					<label for="poster">Poster link</label>
+					<input  type="text" class="form-control" id="poster" placeholder="Enter poster link">
+					<img src="" alt="" />
+				</div>
+				<div class="form-group">
+					<label for="release">Release date</label>
+					<input  type="date" class="form-control" id="release" >
+				</div>
+				<button type="submit" class="btn btn-primary">Submit</button>
+				<button type="submit" class="btn btn-danger">Cancel</button>
+
+			</form>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col">
+		<table class="table responsive">
+			<thead class="thead-dark">
+				<tr>
+					<th scope="col">Title</th>
+					<th scope="col">Plot</th>
+					<th scope="col">Poster</th>
+					<th scope="col">Release date  </th>
+					<th scope="col">Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+			<tr v-for="movie in movies" :key="movie._id">
+				<td>{{ movie.title }}</td>
+				<td>{{ movie.plot }}</td>
+				<td><img v-bind:src="movie.poster" alt="" loading="lazy"></td>
+				<td>{{ movie.released }}</td>
+				<td>
+					<button  type="button" class="btn btnsm">
+						<i class="fas fa-trash-alt"></i>
+					</button>
+				</td>
+			</tr>
+			</tbody>
+		</table>
+		</div>
+	</div>
+</div>
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<script>
+	const app = Vue.createApp({
+		data() {
+			return {
+				movies: [],
+				noImageUrl: "https://www.stillisolutions.com/wp-content/uploads/2017/09/no-image-box-300x155.png"
+			}
+		},
+		methods: {
+			getMovies() {
+				axios.get("/movies/").then( (response) => {
+					const movies = response.data;
+					movies.forEach(m => {
+						if (m.poster != null) {
+							m.poster = m.poster.replace("http://ia.media-imdb.com/", "https://m.media-amazon.com/")
+						} else {
+							m.poster = this.noImageUrl
+						}
+					});
+					this.movies = movies;
+				})
+			},
+			replaceByDefault(e) {
+				e.target.src = this.noImageUrl;
+			}
+		},
+		mounted() {
+			this.getMovies();
+		}
+	});
+	app.mount("#crud-movies-app");
+</script>
+
+</body>
+</html>
